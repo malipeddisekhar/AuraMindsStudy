@@ -281,17 +281,13 @@ form.addEventListener('submit', async (e) => {
       const payload = await readJsonSafe(res);
 
       if (payload && payload.locked) {
-        setLockedState(payload.remainingSeconds);
+        const remaining = Number(payload.remainingSeconds) || 0;
+        location.replace(`/denied?reason=locked&remaining=${encodeURIComponent(remaining)}`);
         return;
       }
 
       if (res.status === 401) {
-        const attempts = Number.isInteger(payload?.remainingAttempts) ? payload.remainingAttempts : null;
-        if (attempts !== null) {
-          errorMsg.textContent = `Invalid code. ${attempts} ${attempts === 1 ? 'attempt' : 'attempts'} left.`;
-        } else {
-          errorMsg.textContent = 'Invalid code. Please try again.';
-        }
+        location.replace('/denied?reason=invalid');
       } else {
         errorMsg.textContent = 'Unable to verify code right now.';
       }

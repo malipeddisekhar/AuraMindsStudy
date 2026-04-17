@@ -157,9 +157,48 @@
   const reason = params.get('reason');
   const shell = document.getElementById('warningShell');
   const detail = document.getElementById('detailMsg');
+  const retryBtn = document.getElementById('retryBtn');
+  let lockCountdownId = null;
+
+  function formatCountdown(totalSeconds) {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  }
+
+  function startLockCountdown(secondsInput) {
+    let secondsLeft = Math.max(0, Number(secondsInput) || 0);
+    retryBtn.disabled = true;
+    retryBtn.style.opacity = '0.65';
+    retryBtn.style.cursor = 'not-allowed';
+
+    const tick = () => {
+      if (secondsLeft <= 0) {
+        if (lockCountdownId !== null) {
+          clearInterval(lockCountdownId);
+          lockCountdownId = null;
+        }
+        detail.textContent = 'Lock period finished. You can try entering the secret code again.';
+        retryBtn.disabled = false;
+        retryBtn.style.opacity = '1';
+        retryBtn.style.cursor = 'pointer';
+        retryBtn.textContent = 'Try Again';
+        return;
+      }
+
+      detail.textContent = `Too many wrong PIN attempts. Access is locked for ${formatCountdown(secondsLeft)}.`;
+      retryBtn.textContent = `Try Again (${formatCountdown(secondsLeft)})`;
+      secondsLeft -= 1;
+    };
+
+    tick();
+    lockCountdownId = setInterval(tick, 1000);
+  }
 
   if (reason === 'invalid') {
     detail.textContent = 'Incorrect secret code provided. Access remains blocked.';
+  } else if (reason === 'locked') {
+    startLockCountdown(params.get('remaining'));
   } else {
     detail.textContent = 'You cannot enter this area without successful verification.';
   }
@@ -167,7 +206,10 @@
   shell.classList.add('shake');
   setTimeout(() => shell.classList.remove('shake'), 500);
 
-  document.getElementById('retryBtn').addEventListener('click', () => {
+  retryBtn.addEventListener('click', () => {
+    if (retryBtn.disabled) {
+      return;
+    }
     location.replace('/access');
   });
 </script>
