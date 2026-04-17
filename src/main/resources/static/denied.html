@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Access Denied - Auraminds</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&display=swap');
+
+  :root {
+    --danger-bg: #150507;
+    --danger-card: #2a0b11;
+    --danger-border: #7f1d1d;
+    --danger-accent: #ef4444;
+    --danger-text: #fee2e2;
+    --danger-muted: #fca5a5;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    color: var(--danger-text);
+    background:
+      radial-gradient(circle at 15% 15%, rgba(239,68,68,0.18), transparent 35%),
+      radial-gradient(circle at 85% 85%, rgba(127,29,29,0.25), transparent 45%),
+      linear-gradient(160deg, #1a060a 0%, var(--danger-bg) 50%, #21070c 100%);
+    display: grid;
+    place-items: center;
+    padding: 24px;
+  }
+
+  .warning-shell {
+    width: min(560px, 100%);
+    background: linear-gradient(180deg, rgba(239,68,68,0.08), rgba(127,29,29,0.08));
+    border: 1px solid var(--danger-border);
+    border-radius: 18px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(127,29,29,0.35);
+    animation: riseIn 420ms ease;
+  }
+
+  .warning-shell.shake {
+    animation: shakeX 420ms ease;
+  }
+
+  @keyframes riseIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes shakeX {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-6px); }
+    80% { transform: translateX(6px); }
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(239,68,68,0.5);
+    background: rgba(239,68,68,0.12);
+    color: #fecaca;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    animation: pulseWarn 1.4s ease-in-out infinite;
+  }
+
+  @keyframes pulseWarn {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.25); }
+    50% { box-shadow: 0 0 0 12px rgba(239,68,68,0); }
+  }
+
+  h1 {
+    margin: 16px 0 8px;
+    font-size: clamp(28px, 4vw, 36px);
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    margin: 0;
+    color: var(--danger-muted);
+    line-height: 1.6;
+    font-size: 14px;
+  }
+
+  .alert-box {
+    margin-top: 18px;
+    border: 1px solid rgba(239,68,68,0.35);
+    background: rgba(127,29,29,0.22);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: #fecaca;
+  }
+
+  .actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    border: none;
+    border-radius: 10px;
+    padding: 11px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .btn-primary {
+    background: var(--danger-accent);
+    color: #fff;
+  }
+
+  .btn-primary:hover {
+    filter: brightness(1.05);
+  }
+
+  .btn-secondary {
+    border: 1px solid rgba(252,165,165,0.4);
+    background: rgba(255,255,255,0.04);
+    color: #fecaca;
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255,255,255,0.08);
+  }
+</style>
+</head>
+<body>
+  <section class="warning-shell" id="warningShell">
+    <div class="badge">Security Alert</div>
+    <h1>Access Denied</h1>
+    <p>Your request is restricted. A valid secret code is required to continue.</p>
+    <div class="alert-box" id="detailMsg">Unauthorized access attempt detected.</div>
+    <div class="actions">
+      <a class="btn btn-primary" href="/access">Return To Access Page</a>
+      <button class="btn btn-secondary" id="retryBtn" type="button">Try Again</button>
+    </div>
+  </section>
+
+<script>
+  const params = new URLSearchParams(location.search);
+  const reason = params.get('reason');
+  const shell = document.getElementById('warningShell');
+  const detail = document.getElementById('detailMsg');
+
+  if (reason === 'invalid') {
+    detail.textContent = 'Incorrect secret code provided. Access remains blocked.';
+  } else {
+    detail.textContent = 'You cannot enter this area without successful verification.';
+  }
+
+  shell.classList.add('shake');
+  setTimeout(() => shell.classList.remove('shake'), 500);
+
+  document.getElementById('retryBtn').addEventListener('click', () => {
+    location.replace('/access');
+  });
+</script>
+</body>
+</html>

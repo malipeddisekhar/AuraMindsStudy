@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auraminds Access</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  :root {
+    --bg: #f7f8fb;
+    --card: #ffffff;
+    --text: #111827;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --accent: #111827;
+    --danger: #dc2626;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(74,123,247,0.18), transparent 32%),
+      radial-gradient(circle at 85% 80%, rgba(52,199,123,0.16), transparent 30%),
+      var(--bg);
+    color: var(--text);
+    display: grid;
+    place-items: center;
+    padding: 20px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 18px 45px rgba(0,0,0,0.08);
+    animation: cardIn 450ms ease;
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  h1 {
+    margin: 0 0 8px;
+    font-size: 24px;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    margin: 0 0 20px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  label {
+    font-size: 13px;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .field {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .field:focus {
+    border-color: #4a7bf7;
+  }
+
+  .actions {
+    margin-top: 14px;
+  }
+
+  button {
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 14px;
+    cursor: pointer;
+  }
+
+  button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  .error {
+    margin-top: 12px;
+    min-height: 18px;
+    font-size: 12px;
+    color: var(--danger);
+  }
+
+  .welcome-screen {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: rgba(247,248,251,0.88);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 300ms ease;
+  }
+
+  .welcome-screen.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .welcome-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    min-width: 280px;
+    padding: 24px 28px;
+    text-align: center;
+    box-shadow: 0 18px 45px rgba(0,0,0,0.1);
+    transform: translateY(18px);
+    opacity: 0;
+    transition: transform 400ms ease, opacity 400ms ease;
+  }
+
+  .welcome-screen.show .welcome-card {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .welcome-title {
+    margin: 0;
+    font-size: 24px;
+    letter-spacing: -0.02em;
+  }
+
+  .welcome-sub {
+    margin: 8px 0 0;
+    font-size: 13px;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Enter Access Code</h1>
+    <p>Use your private code to continue to Auraminds.</p>
+
+    <form id="accessForm">
+      <label for="codeInput">Secret Code</label>
+      <input id="codeInput" class="field" type="password" autocomplete="off" required>
+      <div class="actions">
+        <button id="submitBtn" type="submit">Continue</button>
+      </div>
+      <div class="error" id="errorMsg"></div>
+    </form>
+  </div>
+
+  <div class="welcome-screen" id="welcomeScreen" aria-hidden="true">
+    <div class="welcome-card" role="status" aria-live="polite">
+      <h2 class="welcome-title">Welcome</h2>
+      <p class="welcome-sub">Access granted. Redirecting to Auraminds...</p>
+    </div>
+  </div>
+
+<script>
+const form = document.getElementById('accessForm');
+const codeInput = document.getElementById('codeInput');
+const submitBtn = document.getElementById('submitBtn');
+const errorMsg = document.getElementById('errorMsg');
+const welcomeScreen = document.getElementById('welcomeScreen');
+let lockTimerId = null;
+let locked = false;
+
+function formatCountdown(totalSeconds) {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+function clearLockTimer() {
+  if (lockTimerId !== null) {
+    clearInterval(lockTimerId);
+    lockTimerId = null;
+  }
+}
+
+function setLockedState(remainingSeconds) {
+  clearLockTimer();
+  locked = true;
+  codeInput.disabled = true;
+  submitBtn.disabled = true;
+
+  let secondsLeft = Math.max(0, Number(remainingSeconds) || 0);
+  const tick = () => {
+    if (secondsLeft <= 0) {
+      clearLockTimer();
+      locked = false;
+      codeInput.disabled = false;
+      submitBtn.disabled = false;
+      errorMsg.textContent = '';
+      codeInput.focus();
+      checkStatus();
+      return;
+    }
+
+    errorMsg.textContent = `Too many attempts. Try again in ${formatCountdown(secondsLeft)}.`;
+    secondsLeft -= 1;
+  };
+
+  tick();
+  lockTimerId = setInterval(tick, 1000);
+}
+
+async function readJsonSafe(response) {
+  try {
+    return await response.json();
+  } catch (_) {
+    return null;
+  }
+}
+
+function showWelcomeAndNavigate() {
+  welcomeScreen.classList.add('show');
+  setTimeout(() => {
+    location.replace('/app');
+  }, 1150);
+}
+
+async function checkStatus() {
+  try {
+    const res = await fetch('/api/access/status');
+    if (!res.ok) return;
+    const status = await res.json();
+    if (status.granted) {
+      showWelcomeAndNavigate();
+      return;
+    }
+
+    if (status.locked) {
+      setLockedState(status.remainingSeconds);
+    }
+  } catch (_) {
+  }
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (locked) return;
+
+  errorMsg.textContent = '';
+  submitBtn.disabled = true;
+
+  try {
+    const res = await fetch('/api/access/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: codeInput.value })
+    });
+
+    if (!res.ok) {
+      const payload = await readJsonSafe(res);
+
+      if (payload && payload.locked) {
+        setLockedState(payload.remainingSeconds);
+        return;
+      }
+
+      if (res.status === 401) {
+        const attempts = Number.isInteger(payload?.remainingAttempts) ? payload.remainingAttempts : null;
+        if (attempts !== null) {
+          errorMsg.textContent = `Invalid code. ${attempts} ${attempts === 1 ? 'attempt' : 'attempts'} left.`;
+        } else {
+          errorMsg.textContent = 'Invalid code. Please try again.';
+        }
+      } else {
+        errorMsg.textContent = 'Unable to verify code right now.';
+      }
+      return;
+    }
+
+    showWelcomeAndNavigate();
+  } catch (_) {
+    errorMsg.textContent = 'Unable to verify code right now.';
+  } finally {
+    codeInput.value = '';
+    if (!locked) {
+      submitBtn.disabled = false;
+      codeInput.focus();
+    }
+  }
+});
+
+checkStatus();
+codeInput.focus();
+</script>
+</body>
+</html>
