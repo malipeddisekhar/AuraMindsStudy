@@ -6,19 +6,9 @@ services:
     autoDeploy: true
     dockerfilePath: ./Dockerfile
     healthCheckPath: /access
+
     envVars:
       - key: ACCESS_CODE_HASH
-        sync: false
       - key: SPRING_DATASOURCE_URL
-        sync: false
       - key: SPRING_DATASOURCE_USERNAME
-        sync: false
       - key: SPRING_DATASOURCE_PASSWORD
-        sync: false
-      - key: DB_URL
-        sync: false
-      - key: DB_USER
-        sync: false
-      - key: DB_PASSWORD
-        sync: false
-        sync: false
