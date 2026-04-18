@@ -61,10 +61,11 @@ This project is ready for a Render Docker web service.
 2. Deploy the `augmind-app` web service from `Dockerfile`.
 3. Set these environment variables in Render:
    - `ACCESS_CODE_HASH`
-   - `DB_URL`
-   - `DB_USER`
-   - `DB_PASSWORD`
-4. Point `DB_URL` at an external MySQL database. Render does not provide a managed MySQL service, so the app must connect to a MySQL host you control.
+   - `SPRING_DATASOURCE_URL`
+   - `SPRING_DATASOURCE_USERNAME`
+   - `SPRING_DATASOURCE_PASSWORD`
+   - Optional aliases supported by the app: `DB_URL`, `DB_USER`, `DB_PASSWORD`
+4. Point the datasource URL at an external MySQL database. Render does not provide a managed MySQL service, so the app must connect to a MySQL host you control.
 5. The service health check should use `/access`, which returns the public access page and does not require an authenticated session.
 
 The app listens on Render's assigned `PORT` automatically.
