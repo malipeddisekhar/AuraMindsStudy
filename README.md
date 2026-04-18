@@ -54,6 +54,21 @@ src/
 docker compose up --build
 ```
 
+## Deploy to Render
+This project is ready for a Render Docker web service.
+
+1. Connect the repository to Render or use the included `render.yaml` blueprint.
+2. Deploy the `augmind-app` web service from `Dockerfile`.
+3. Set these environment variables in Render:
+   - `ACCESS_CODE_HASH`
+   - `DB_URL`
+   - `DB_USER`
+   - `DB_PASSWORD`
+4. Point `DB_URL` at an external MySQL database. Render does not provide a managed MySQL service, so the app must connect to a MySQL host you control.
+5. The service health check should use `/access`, which returns the public access page and does not require an authenticated session.
+
+The app listens on Render's assigned `PORT` automatically.
+
 ## Dynamic Website Routes Used Internally
 - `GET /tasks?status=all|active|completed`
 - `POST /tasks`
