@@ -34,14 +34,33 @@ src/
 ```
 
 ## Run Locally (MySQL)
-1. Start MySQL and create a database named `augmind` (or let auto-create happen).
-2. Update `DB_USER` and `DB_PASSWORD` in environment variables if needed.
-3. Run:
+1. Install Java 21 and MySQL 8+.
+2. Create a MySQL database named `augmind`.
+3. Set the database environment variables:
+   - `DB_URL=jdbc:mysql://localhost:3306/augmind?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC`
+   - `DB_USER=root`
+   - `DB_PASSWORD=root`
+4. Start the Spring Boot app with:
    ```bash
    mvn spring-boot:run
    ```
-4. Open website:
-   - App: http://localhost:8080
+5. Open the app in the browser:
+   - http://localhost:8080
+
+## Spring Boot Setup Guide
+1. Open the project in VS Code or IntelliJ.
+2. Check the Spring Boot entry point at `src/main/java/com/augmind/app/AugmindApplication.java`.
+3. Review the database config in `src/main/resources/application.properties`.
+4. Make sure the datasource values point to your MySQL server.
+5. Run the app and confirm that JPA creates the tables automatically.
+6. If you change code, restart the app so Spring reloads the updated classes.
+
+## MySQL Database Setup Guide
+1. Install MySQL 8 or use a hosted MySQL service.
+2. Create a database called `augmind`.
+3. Use the schema automatically created by JPA on first startup.
+4. Keep `spring.jpa.hibernate.ddl-auto=update` so the tables are created and adjusted automatically.
+5. If the app cannot connect, verify host, port, username, password, and network access.
 
 ## Default MySQL Configuration
 - `DB_URL=jdbc:mysql://localhost:3306/augmind?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC`
