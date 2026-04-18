@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -126,6 +126,36 @@
     display: flex;
     align-items: center;
     gap: 12px;
+  }
+
+  .nav-quick-add {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    color: var(--text-muted);
+    min-width: 170px;
+  }
+
+  .nav-quick-add:focus-within {
+    border-color: var(--text-muted);
+  }
+
+  .quick-add-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 13px;
+    width: 100%;
+  }
+
+  .quick-add-input::placeholder {
+    color: var(--text-muted);
   }
 
   /* === PAGE VIEWS === */
@@ -516,10 +546,7 @@
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-  }
-
-  .profile-wrap {
-    position: relative;
+    border: none;
   }
 
   .profile-trigger {
@@ -537,15 +564,8 @@
     border-color: var(--text-muted);
   }
 
-  .profile-name {
-    font-size: 12px;
-    color: var(--text-secondary);
-    font-weight: 600;
-    padding-right: 8px;
-    max-width: 100px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  .profile-wrap {
+    position: relative;
   }
 
   .profile-menu {
@@ -564,7 +584,9 @@
     z-index: 220;
   }
 
-  .profile-menu.show { display: flex; }
+  .profile-menu.show {
+    display: flex;
+  }
 
   .profile-menu-item {
     width: 100%;
@@ -581,11 +603,28 @@
     transition: background 0.2s ease, color 0.2s ease;
   }
 
-  .profile-menu-item:hover { background: var(--accent-soft); }
+  .profile-menu-item:hover {
+    background: var(--accent-soft);
+  }
 
-  .profile-menu-item.exit { color: var(--red); }
+  .profile-menu-item.exit {
+    color: var(--red);
+  }
 
-  .profile-menu-item.exit:hover { background: #fff1f1; }
+  .profile-menu-item.exit:hover {
+    background: #fff1f1;
+  }
+
+  .profile-name {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    padding-right: 8px;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
   /* === MAIN LAYOUT === */
   .main {
@@ -648,6 +687,13 @@
     line-height: 1.6;
     color: var(--text-secondary);
     font-weight: 300;
+  }
+
+  .hero-welcome {
+    margin-top: 14px;
+    font-size: 14px;
+    color: var(--text-primary);
+    font-weight: 600;
   }
 
   .hero-quote-panel {
@@ -1484,7 +1530,17 @@
   @media (max-width: 768px) {
     .nav { padding: 12px 16px; }
     .nav-inner { display: flex; flex-wrap: wrap; gap: 10px; }
-    .nav-links { display: none; }
+    .nav-logo { flex: 1; }
+    .nav-right { width: 100%; order: 3; }
+    .nav-quick-add { flex: 1; min-width: 0; }
+    .nav-links {
+      order: 2;
+      width: 100%;
+      overflow-x: auto;
+      justify-content: flex-start;
+      padding: 4px;
+    }
+    .profile-name { display: none; }
     .hero {
       padding: 40px 20px 30px;
       min-height: auto;
@@ -1564,7 +1620,7 @@
   }
 </style>
 </head>
-<body>
+<body th:attr="data-user-name=${userName},data-welcome-quote=${welcomeQuote}">
 
 <!-- NAVIGATION -->
 <nav class="nav">
@@ -1588,14 +1644,14 @@
     </div>
 
     <div class="nav-right">
-      <div class="nav-search" onclick="document.getElementById('taskInput').focus()">
+      <div class="nav-quick-add">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        Quick add...
+        <input id="quickAddInput" class="quick-add-input" type="text" placeholder="Quick add task..." aria-label="Quick add">
       </div>
       <div class="profile-wrap">
         <button class="profile-trigger" id="profileTrigger" title="Profile options" type="button">
           <div class="avatar" id="navAvatar">A</div>
-          <span class="profile-name" id="profileName">Learner</span>
+          <span class="profile-name" id="profileName" th:text="${userName}">Learner</span>
         </button>
         <div class="profile-menu" id="profileMenu" role="menu" aria-label="Profile options">
           <button class="profile-menu-item" type="button" id="editProfileNameBtn">Edit name</button>
@@ -1623,6 +1679,7 @@
       <div class="hero-label">Auraminds</div>
       <h1 class="hero-title">Organize your<br>learning path.</h1>
       <p class="hero-subtitle">Track study sessions, manage daily tasks, and stay focused with integrated tools designed for deep work.</p>
+      <p class="hero-welcome" id="heroWelcome" th:text="'Welcome, ' + ${userName} + '!'">Welcome, Learner!</p>
       <div class="hero-tags">
         <span class="hero-tag">⏱ Pomodoro</span>
         <span class="hero-tag">📋 Tasks</span>
@@ -2221,6 +2278,7 @@ function navigateTo(pageName) {
 
   // Update page-specific content
   updatePageContent(pageName);
+  updateQuickAddPlaceholder(pageName);
 }
 
 function updatePageContent(pageName) {
@@ -2258,90 +2316,22 @@ document.querySelectorAll('.nav-link').forEach(link => {
   });
 });
 
-const api = {
-  async request(path, options = {}) {
-    const response = await fetch(path, {
-      headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
-      ...options
-    });
-    if (!response.ok) {
-      throw new Error(`Request failed: ${response.status}`);
-    }
-    if (response.status === 204) return null;
-    return response.json();
-  }
-};
-
-let tasks = [];
-let subjects = [];
-let schedule = [];
-let notes = [];
-let currentFilter = 'all';
-let currentFilterPage = 'all';
-let sessionsCompleted = 0;
-let taskHistorySummary = [];
-let selectedHistoryDate = null;
-let calendarCursor = new Date();
-let scheduleHistorySummary = [];
-let selectedScheduleDate = null;
-let scheduleCalendarCursor = new Date();
-let subjectHistorySummary = [];
-let selectedSubjectDate = null;
-let subjectCalendarCursor = new Date();
-let noteHistorySummary = [];
-let selectedNoteDate = null;
-let noteCalendarCursor = new Date();
-let selectedStatsDate = null;
-let statsCalendarCursor = new Date();
-const appStorageKey = 'augmind.profileName';
+const appShell = document.body;
+const quickAddInput = document.getElementById('quickAddInput');
 const profileNameEl = document.getElementById('profileName');
 const navAvatarEl = document.getElementById('navAvatar');
 const profileTriggerEl = document.getElementById('profileTrigger');
 const profileMenuEl = document.getElementById('profileMenu');
 const editProfileNameBtn = document.getElementById('editProfileNameBtn');
 const exitProfileBtn = document.getElementById('exitProfileBtn');
-let currentUserName = localStorage.getItem(appStorageKey) || 'Learner';
-
-function applyProfileUI() {
-  const displayName = (currentUserName || 'Learner').trim();
-  const initial = displayName.charAt(0).toUpperCase() || 'L';
-  if (profileNameEl) profileNameEl.textContent = displayName;
-  if (navAvatarEl) navAvatarEl.textContent = initial;
-  document.body.dataset.userName = displayName;
-}
-
-function setProfileMenuOpen(isOpen) {
-  if (!profileMenuEl) return;
-  profileMenuEl.classList.toggle('show', isOpen);
-}
-
-function toggleProfileMenu(forceOpen) {
-  if (!profileMenuEl) return;
-  const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : !profileMenuEl.classList.contains('show');
-  setProfileMenuOpen(shouldOpen);
-}
-
-async function editProfileName() {
-  const next = prompt('Enter your display name', currentUserName);
-  if (next === null) {
-    return;
-  }
-  const normalized = next.trim();
-  if (!normalized) {
-    showToast('Name cannot be empty', true);
-    return;
-  }
-  currentUserName = normalized;
-  localStorage.setItem(appStorageKey, normalized);
-  applyProfileUI();
-  showToast(`Welcome, ${currentUserName}`);
-}
+const heroWelcomeEl = document.getElementById('heroWelcome');
 const heroQuoteTextEl = document.getElementById('heroQuoteText');
 const heroQuotePanelEl = document.querySelector('.hero-quote-panel');
 let heroQuoteTypingTimer = null;
 
+let currentUserName = appShell.dataset.userName || 'Learner';
 const quotePool = [
-  'Small progress each day leads to big results.',
+  appShell.dataset.welcomeQuote || 'Small progress each day leads to big results.',
   'Your future is created by what you do today, not tomorrow.',
   'Consistency beats intensity when building mastery.',
   'Focus on the next step, and momentum will follow.'
@@ -2392,6 +2382,173 @@ function typeHeroQuote(rawText) {
 
   heroQuoteTypingTimer = window.setTimeout(tick, 280);
 }
+
+function applyProfileUI() {
+  const displayName = (currentUserName || 'Learner').trim();
+  const initial = displayName.charAt(0).toUpperCase() || 'L';
+  if (profileNameEl) profileNameEl.textContent = displayName;
+  if (navAvatarEl) navAvatarEl.textContent = initial;
+  heroWelcomeEl.textContent = `Welcome, ${displayName}!`;
+  document.body.dataset.userName = displayName;
+}
+
+function setProfileMenuOpen(isOpen) {
+  if (!profileMenuEl) return;
+  profileMenuEl.classList.toggle('show', isOpen);
+}
+
+function toggleProfileMenu(forceOpen) {
+  if (!profileMenuEl) return;
+  const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : !profileMenuEl.classList.contains('show');
+  setProfileMenuOpen(shouldOpen);
+}
+
+async function editProfileName() {
+  const next = prompt('Enter your display name', currentUserName);
+  if (next === null) {
+    return;
+  }
+  const normalized = next.trim();
+  if (!normalized) {
+    showToast('Name cannot be empty', true);
+    return;
+  }
+  try {
+    await saveProfileName(normalized);
+    showToast(`Welcome, ${currentUserName}`);
+  } catch (error) {
+    console.error(error);
+    showToast('Profile update failed', true);
+  }
+}
+
+function updateQuickAddPlaceholder(pageName) {
+  if (!quickAddInput) {
+    return;
+  }
+  if (pageName === 'notes') {
+    quickAddInput.placeholder = 'Quick add note...';
+    return;
+  }
+  quickAddInput.placeholder = 'Quick add task...';
+}
+
+async function saveProfileName(name) {
+  const response = await api.request('/api/profile/name', {
+    method: 'PUT',
+    body: JSON.stringify({ name })
+  });
+  currentUserName = response.name || name;
+  applyProfileUI();
+}
+
+async function handleQuickAdd() {
+  const text = quickAddInput.value.trim();
+  if (!text) {
+    return;
+  }
+
+  const activePage = getActivePageId();
+  const isNoteIntent = activePage === 'notes' || text.toLowerCase().startsWith('note:');
+  if (isNoteIntent) {
+    const noteText = text.replace(/^note:\s*/i, '').trim();
+    const noteInputEl = document.getElementById(activePage === 'notes' ? 'noteInputPage' : 'noteInput');
+    if (noteText) {
+      noteInputEl.value = noteText;
+      await addNote();
+      showToast('Note added from quick add');
+    }
+  } else {
+    const taskInputEl = document.getElementById(activePage === 'tasks' ? 'taskInputPage' : 'taskInput');
+    taskInputEl.value = text;
+    await addTask();
+    showToast('Task added from quick add');
+  }
+
+  quickAddInput.value = '';
+}
+
+quickAddInput.addEventListener('keydown', async (event) => {
+  if (event.key !== 'Enter') {
+    return;
+  }
+  event.preventDefault();
+  try {
+    await handleQuickAdd();
+  } catch (error) {
+    console.error(error);
+    showToast('Quick add failed', true);
+  }
+});
+
+profileTriggerEl?.addEventListener('click', (event) => {
+  event.stopPropagation();
+  toggleProfileMenu();
+});
+
+editProfileNameBtn?.addEventListener('click', async (event) => {
+  event.stopPropagation();
+  setProfileMenuOpen(false);
+  await editProfileName();
+  typeHeroQuote(pickQuote());
+});
+
+exitProfileBtn?.addEventListener('click', async (event) => {
+  event.stopPropagation();
+  setProfileMenuOpen(false);
+  await exitApp();
+});
+
+document.addEventListener('click', (event) => {
+  if (!profileMenuEl || !profileTriggerEl) return;
+  if (profileMenuEl.contains(event.target) || profileTriggerEl.contains(event.target)) return;
+  setProfileMenuOpen(false);
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') setProfileMenuOpen(false);
+});
+
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('.nav');
+  nav.style.borderBottomColor = window.scrollY > 8 ? 'rgba(0,0,0,0.09)' : 'rgba(0,0,0,0.04)';
+});
+
+const api = {
+  async request(path, options = {}) {
+    const response = await fetch(path, {
+      headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+      ...options
+    });
+    if (!response.ok) {
+      throw new Error(`Request failed: ${response.status}`);
+    }
+    if (response.status === 204) return null;
+    return response.json();
+  }
+};
+
+let tasks = [];
+let subjects = [];
+let schedule = [];
+let notes = [];
+let currentFilter = 'all';
+let currentFilterPage = 'all';
+let sessionsCompleted = 0;
+let taskHistorySummary = [];
+let selectedHistoryDate = null;
+let calendarCursor = new Date();
+let scheduleHistorySummary = [];
+let selectedScheduleDate = null;
+let scheduleCalendarCursor = new Date();
+let subjectHistorySummary = [];
+let selectedSubjectDate = null;
+let subjectCalendarCursor = new Date();
+let noteHistorySummary = [];
+let selectedNoteDate = null;
+let noteCalendarCursor = new Date();
+let selectedStatsDate = null;
+let statsCalendarCursor = new Date();
 
 function getActivePageId() {
   return document.querySelector('.page.active')?.id || 'dashboard';
@@ -3513,33 +3670,6 @@ async function exitApp() {
   location.replace('/access');
 }
 
-profileTriggerEl?.addEventListener('click', (event) => {
-  event.stopPropagation();
-  toggleProfileMenu();
-});
-
-editProfileNameBtn?.addEventListener('click', async (event) => {
-  event.stopPropagation();
-  setProfileMenuOpen(false);
-  await editProfileName();
-});
-
-exitProfileBtn?.addEventListener('click', async (event) => {
-  event.stopPropagation();
-  setProfileMenuOpen(false);
-  await exitApp();
-});
-
-document.addEventListener('click', (event) => {
-  if (!profileMenuEl || !profileTriggerEl) return;
-  if (profileMenuEl.contains(event.target) || profileTriggerEl.contains(event.target)) return;
-  setProfileMenuOpen(false);
-});
-
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape') setProfileMenuOpen(false);
-});
-
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
   overlay.addEventListener('click', e => {
     if (e.target === overlay) overlay.classList.remove('show');
@@ -3557,9 +3687,10 @@ document.getElementById('noteInputPage').addEventListener('keydown', e => {
 async function init() {
   updateTimerDisplay();
   updateTimerDisplayStats();
-  document.getElementById('scheduleDateInput').value = formatDateISO(new Date());
   applyProfileUI();
   typeHeroQuote(pickQuote());
+  updateQuickAddPlaceholder(getActivePageId());
+  document.getElementById('scheduleDateInput').value = formatDateISO(new Date());
   await Promise.all([loadTasks(), loadTasksPage(), loadSubjects(), loadSchedule(), loadNotes(), refreshStats()]);
 }
 

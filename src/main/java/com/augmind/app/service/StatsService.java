@@ -1,6 +1,7 @@
 package com.augmind.app.service;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,8 +29,9 @@ public class StatsService {
     public StatsResponse getStats() {
         UserMetrics metrics = loadMetrics();
         long tasksDone = taskRepository.countByTaskDateAndCompleted(LocalDate.now(), true);
-        int studyHours = Math.round(metrics.getSessionsCompleted() * 25f / 60f);
-        return new StatsResponse(tasksDone, metrics.getSessionsCompleted(), studyHours, metrics.getStreak());
+        int studyMinutes = metrics.getSessionsCompleted() * 25;
+        int studyHours = studyMinutes / 60;
+        return new StatsResponse(tasksDone, metrics.getSessionsCompleted(), studyMinutes, studyHours, metrics.getStreak());
     }
 
     public StatsResponse incrementSessions() {
@@ -43,7 +45,7 @@ public class StatsService {
     public StatsResponse touchDailyActivity() {
         UserMetrics metrics = loadMetrics();
         updateStreak(metrics);
-        userMetricsRepository.save(metrics);
+        userMetricsRepository.save(Objects.requireNonNull(metrics));
         return getStats();
     }
 

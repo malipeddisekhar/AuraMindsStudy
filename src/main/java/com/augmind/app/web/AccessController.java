@@ -24,6 +24,7 @@ import jakarta.validation.Valid;
 public class AccessController {
 
     public static final String SESSION_ACCESS_GRANTED = "ACCESS_GRANTED";
+    public static final String SESSION_USER_NAME = "APP_USER_NAME";
     private static final String SESSION_FAILED_ATTEMPTS = "ACCESS_FAILED_ATTEMPTS";
     private static final String SESSION_LOCK_UNTIL_MS = "ACCESS_LOCK_UNTIL_MS";
     private static final int MAX_ATTEMPTS = 3;
