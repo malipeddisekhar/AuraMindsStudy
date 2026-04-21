@@ -13,22 +13,16 @@ public class AppPageController {
 
     @GetMapping("/")
     public String root() {
-        return "redirect:/access";
+        return "redirect:/app";
     }
 
     @GetMapping("/access")
     public String accessPage(HttpSession session) {
-        if (isGranted(session)) {
-            return "redirect:/app";
-        }
         return "forward:/access.html";
     }
 
     @GetMapping("/app")
     public String appPage(HttpSession session, Model model) {
-        if (!isGranted(session)) {
-            return "redirect:/denied?reason=unauthorized";
-        }
         String userName = (String) session.getAttribute(AccessController.SESSION_USER_NAME);
         if (userName == null || userName.isBlank()) {
             userName = normalizeUserName(System.getProperty("user.name", "Learner"));
@@ -42,11 +36,6 @@ public class AppPageController {
     @GetMapping("/denied")
     public String deniedPage() {
         return "forward:/denied.html";
-    }
-
-    private boolean isGranted(HttpSession session) {
-        Object val = session.getAttribute(AccessController.SESSION_ACCESS_GRANTED);
-        return val instanceof Boolean b && b;
     }
 
     private String normalizeUserName(String rawName) {
