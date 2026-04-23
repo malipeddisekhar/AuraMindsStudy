@@ -86,6 +86,7 @@ This project is ready for a Render Docker web service.
    - Optional aliases supported by the app: `DB_URL`, `DB_USER`, `DB_PASSWORD`
 4. Point the datasource URL at an external MySQL database. Render does not provide a managed MySQL service, so the app must connect to a MySQL host you control.
 5. The service health check should use `/access`, which returns the public access page and does not require an authenticated session.
+6. If datasource variables are not set, the app now falls back to an in-memory H2 database so the service can still start.
 
 The app listens on Render's assigned `PORT` automatically.
 
