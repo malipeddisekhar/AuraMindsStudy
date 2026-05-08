@@ -64,8 +64,8 @@ src/
 
 ## Default MySQL Configuration
 - `DB_URL=jdbc:mysql://localhost:3306/augmind?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC`
-- `DB_USER=root`
-- `DB_PASSWORD=root`
+- `DB_USER=****`
+- `DB_PASSWORD=****`
 - `PORT=8080`
 
 ## Run with Docker Compose
@@ -110,3 +110,14 @@ The app listens on Render's assigned `PORT` automatically.
 - Tables are created automatically by JPA (`ddl-auto=update`).
 - Default subjects and schedule entries are seeded automatically on first run.
 - UI now supports adding and deleting tasks, subjects, schedules, and notes dynamically.
+
+  ## License
+This project is developed for educational and learning purposes.
+
+## Author
+Developed by Malipeddi Sekhar
+
+## Copyright
+© 2026 Malipeddi Sekhar. All rights reserved.
+
+Permission is granted to use, modify, and distribute this project for academic and personal use only.
