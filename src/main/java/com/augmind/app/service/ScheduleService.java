@@ -65,6 +65,9 @@ public class ScheduleService {
     }
 
     public void deleteSchedule(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Schedule ID cannot be null");
+        }
         if (!scheduleRepository.existsById(id)) {
             throw new EntityNotFoundException("Schedule item not found: " + id);
         }

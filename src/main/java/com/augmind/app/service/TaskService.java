@@ -82,6 +82,9 @@ public class TaskService {
     }
 
     public TaskResponse toggleTask(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Task ID cannot be null");
+        }
         TaskItem task = taskRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Task not found: " + id));
         task.setCompleted(!task.isCompleted());
@@ -89,6 +92,9 @@ public class TaskService {
     }
 
     public void deleteTask(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Task ID cannot be null");
+        }
         if (!taskRepository.existsById(id)) {
             throw new EntityNotFoundException("Task not found: " + id);
         }

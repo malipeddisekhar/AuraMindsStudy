@@ -66,6 +66,9 @@ public class NoteService {
     }
 
     public NoteResponse updateNote(Long id, NoteCreateRequest request) {
+        if (id == null) {
+            throw new IllegalArgumentException("Note ID cannot be null");
+        }
         NoteItem item = noteRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Note not found: " + id));
         item.setText(request.text().trim());
@@ -73,6 +76,9 @@ public class NoteService {
     }
 
     public void deleteNote(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Note ID cannot be null");
+        }
         if (!noteRepository.existsById(id)) {
             throw new EntityNotFoundException("Note not found: " + id);
         }

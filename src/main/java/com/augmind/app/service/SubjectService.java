@@ -71,6 +71,9 @@ public class SubjectService {
     }
 
     public void deleteSubject(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Subject ID cannot be null");
+        }
         if (!subjectRepository.existsById(id)) {
             throw new EntityNotFoundException("Subject not found: " + id);
         }

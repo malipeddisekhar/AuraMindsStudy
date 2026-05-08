@@ -50,6 +50,7 @@ public class DataInitializer implements CommandLineRunner {
         userMetricsRepository.save(metrics);
     }
 
+    @SuppressWarnings("null")
     private void seedSubjects() {
         if (subjectRepository.count() > 0) {
             return;
@@ -83,15 +84,17 @@ public class DataInitializer implements CommandLineRunner {
         literature.setLoggedHours(5);
         literature.setColor("#8B5CF6");
 
-        subjectRepository.saveAll(List.of(math, physics, cs, literature));
+        List<SubjectItem> subjects = List.of(math, physics, cs, literature);
+        subjectRepository.saveAll(subjects);
     }
 
+    @SuppressWarnings("null")
     private void seedSchedule() {
         if (scheduleRepository.count() > 0) {
             return;
         }
 
-        scheduleRepository.saveAll(List.of(
+        List<ScheduleItem> schedules = List.of(
             schedule("08:00", "Morning Review", "Review yesterday's notes", "#34C77B"),
             schedule("09:30", "Math Lecture", "Chapter 7 - Differential Equations", "#4A7BF7"),
             schedule("11:00", "Physics Lab", "Electromagnetic experiments", "#F59E42"),
@@ -100,7 +103,8 @@ public class DataInitializer implements CommandLineRunner {
             schedule("16:00", "Literature Reading", "Chapters 12-14", "#E5484D"),
             schedule("18:00", "Exercise", "30 min cardio + stretching", "#34C77B"),
             schedule("20:00", "Evening Study", "Review and practice problems", "#4A7BF7")
-        ));
+        );
+        scheduleRepository.saveAll(schedules);
     }
 
     private ScheduleItem schedule(String time, String title, String description, String color) {
