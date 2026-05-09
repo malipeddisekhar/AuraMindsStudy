@@ -2965,9 +2965,58 @@
   .toast.error {
     background: var(--red);
   }
+
+  .app-loader {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: var(--bg);
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 300ms ease;
+    pointer-events: auto;
+  }
+
+  .app-loader.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .loader-content {
+    text-align: center;
+  }
+
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid rgba(74, 123, 247, 0.2);
+    border-top-color: #4a7bf7;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .loader-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+    font-weight: 500;
+  }
 </style>
 </head>
 <body>
+
+<div class="app-loader" id="appLoader">
+  <div class="loader-content">
+    <div class="spinner"></div>
+    <p class="loader-text">Loading Auraminds...</p>
+  </div>
+</div>
 
 <!-- NAVIGATION -->
 <nav class="nav">
@@ -3633,6 +3682,22 @@
 </div>
 
 <script>
+// Hide loader when page is ready
+window.addEventListener('load', () => {
+  const loader = document.getElementById('appLoader');
+  if (loader) {
+    loader.classList.add('hidden');
+  }
+});
+
+// Also hide loader quickly if DOM is ready
+if (document.readyState === 'interactive' || document.readyState === 'complete') {
+  const loader = document.getElementById('appLoader');
+  if (loader) {
+    setTimeout(() => loader.classList.add('hidden'), 500);
+  }
+}
+
 // ========== PAGE NAVIGATION ==========
 function navigateTo(pageName) {
   // Hide all pages
@@ -3749,6 +3814,7 @@ const api = {
   async request(path, options = {}) {
     const response = await fetch(path, {
       headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+      credentials: 'include',
       ...options
     });
     if (!response.ok) {

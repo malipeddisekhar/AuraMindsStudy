@@ -158,9 +158,61 @@
     font-size: 13px;
     color: var(--muted);
   }
+
+  .app-loader {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: 
+      radial-gradient(circle at 15% 20%, rgba(74,123,247,0.18), transparent 32%),
+      radial-gradient(circle at 85% 80%, rgba(52,199,123,0.16), transparent 30%),
+      var(--bg);
+    z-index: 999;
+    opacity: 1;
+    transition: opacity 300ms ease;
+    pointer-events: auto;
+  }
+
+  .app-loader.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .loader-content {
+    text-align: center;
+  }
+
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid rgba(74, 123, 247, 0.2);
+    border-top-color: #4a7bf7;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .loader-text {
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    font-weight: 500;
+  }
 </style>
 </head>
 <body>
+  <div class="app-loader" id="appLoader">
+    <div class="loader-content">
+      <div class="spinner"></div>
+      <p class="loader-text">Loading Auraminds...</p>
+    </div>
+  </div>
+
   <div class="card">
     <h1>Enter Access Code</h1>
     <p>Use your private code to continue to Auraminds.</p>
@@ -183,6 +235,22 @@
   </div>
 
 <script>
+// Hide loader when page is ready
+window.addEventListener('load', () => {
+  const loader = document.getElementById('appLoader');
+  if (loader) {
+    loader.classList.add('hidden');
+  }
+});
+
+// Also hide loader quickly if DOM is ready
+if (document.readyState === 'interactive' || document.readyState === 'complete') {
+  const loader = document.getElementById('appLoader');
+  if (loader) {
+    setTimeout(() => loader.classList.add('hidden'), 500);
+  }
+}
+
 const form = document.getElementById('accessForm');
 const codeInput = document.getElementById('codeInput');
 const submitBtn = document.getElementById('submitBtn');
