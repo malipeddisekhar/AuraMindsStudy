@@ -3617,6 +3617,21 @@
   </div>
 </div>
 
+<!-- EDIT PROFILE NAME MODAL -->
+<div class="modal-overlay" id="editProfileNameModal">
+  <div class="modal">
+    <div class="modal-title">Edit Display Name</div>
+    <div class="modal-field">
+      <label class="modal-label">Your Name</label>
+      <input type="text" class="modal-input" id="editProfileNameInput" placeholder="Enter your display name">
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeEditProfileNameModal()">Cancel</button>
+      <button class="modal-btn primary" onclick="saveProfileName()">Save</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ========== PAGE NAVIGATION ==========
 function navigateTo(pageName) {
@@ -3794,19 +3809,55 @@ function toggleProfileMenu(forceOpen) {
 }
 
 async function editProfileName() {
-  const next = prompt('Enter your display name', currentUserName);
-  if (next === null) {
-    return;
+  const modal = document.getElementById('editProfileNameModal');
+  const input = document.getElementById('editProfileNameInput');
+  if (modal && input) {
+    input.value = currentUserName;
+    input.focus();
+    modal.classList.add('show');
   }
-  const normalized = next.trim();
-  if (!normalized) {
+}
+
+function closeEditProfileNameModal() {
+  const modal = document.getElementById('editProfileNameModal');
+  if (modal) {
+    modal.classList.remove('show');
+  }
+}
+
+async function saveProfileName() {
+  const input = document.getElementById('editProfileNameInput');
+  if (!input) return;
+
+  const newName = input.value.trim();
+  if (!newName) {
     showToast('Name cannot be empty', true);
     return;
   }
-  currentUserName = normalized;
-  localStorage.setItem(appStorageKey, normalized);
-  applyProfileUI();
-  showToast(`Welcome, ${currentUserName}`);
+
+  try {
+    const response = await fetch('/api/profile/name', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ name: newName })
+    });
+
+    if (!response.ok) {
+      showToast('Failed to save name', true);
+      return;
+    }
+
+    const data = await response.json();
+    currentUserName = data.name;
+    localStorage.setItem(appStorageKey, data.name);
+    applyProfileUI();
+    closeEditProfileNameModal();
+    showToast(`Welcome, ${currentUserName}!`);
+  } catch (error) {
+    console.error('Error saving profile name:', error);
+    showToast('Failed to save name', true);
+  }
 }
 const heroQuoteTextEl = document.getElementById('heroQuoteText');
 const heroQuotePanelEl = document.querySelector('.hero-quote-panel');
@@ -5017,6 +5068,15 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
     if (e.target === overlay) overlay.classList.remove('show');
   });
 });
+
+// Edit Profile Name Modal - keyboard support
+const editProfileNameInput = document.getElementById('editProfileNameInput');
+if (editProfileNameInput) {
+  editProfileNameInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') saveProfileName();
+    if (e.key === 'Escape') closeEditProfileNameModal();
+  });
+}
 
 document.getElementById('noteInput').addEventListener('keydown', e => {
   if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) addNote();

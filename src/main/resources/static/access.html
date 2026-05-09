@@ -248,7 +248,9 @@ function showWelcomeAndNavigate() {
 
 async function checkStatus() {
   try {
-    const res = await fetch('/api/access/status');
+    const res = await fetch('/api/access/status', {
+      credentials: 'include'
+    });
     if (!res.ok) return;
     const status = await res.json();
     if (status.granted) {
@@ -274,6 +276,7 @@ form.addEventListener('submit', async (e) => {
     const res = await fetch('/api/access/verify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({ code: codeInput.value })
     });
 

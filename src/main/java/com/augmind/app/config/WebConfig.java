@@ -16,6 +16,8 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(@NonNull InterceptorRegistry registry) {
-        registry.addInterceptor(accessGateInterceptor).addPathPatterns("/**");
+        registry.addInterceptor(accessGateInterceptor)
+            .addPathPatterns("/**")
+            .excludePathPatterns("/denied", "/denied.html", "/access", "/access.html", "/", "/api/access/**");
     }
 }
