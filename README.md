@@ -535,16 +535,6 @@ target/site/jacoco/index.html
 ### Test Files
 - `src/test/java/com/augmind/app/web/ApiSmokeTest.java` - Integration tests
 
----
-
-## 📚 Documentation Files
-
-- [QUICK_START.md](QUICK_START.md) - Quick setup guide
-- [DEPLOYMENT.md](DEPLOYMENT.md) - Detailed deployment instructions
-- [FIX_SUMMARY.md](FIX_SUMMARY.md) - Recent fixes and improvements
-
----
-
 ## 🔗 Useful Links & Resources
 
 ### Official Documentation
@@ -579,10 +569,10 @@ target/site/jacoco/index.html
 ## 👨‍💻 Author & Contributors
 
 ### Project Author
-**Name**: [Your Name]  
-**Email**: [your.email@example.com]  
-**GitHub**: [@yourprofile](https://github.com/yourprofile)  
-**LinkedIn**: [Your LinkedIn Profile](https://linkedin.com/in/yourprofile)  
+**Name**:MALIPEDDI SEKHAR  
+**Email**: malipeddisekhar63@gmail.com  
+**GitHub**: https://github.com/malipeddisekhar 
+**LinkedIn**:(https://linkedin.com/in/malipeddisekhar  
 
 ### Contribution Guidelines
 We welcome contributions! Please follow these steps:
@@ -650,9 +640,8 @@ SOFTWARE.
 
 ### Getting Help
 - 🌐 **Live Demo**: [https://augmind-app.onrender.com/](https://augmind-app.onrender.com/) - Try the app now!
-- 📧 **Email Support**: [your.email@example.com]
-- 💬 **GitHub Issues**: [Report bugs and feature requests](https://github.com/yourprofile/augmind-app/issues)
-- 💡 **Discussions**: [Community discussions](https://github.com/yourprofile/augmind-app/discussions)
+- 📧 **Email Support**: [malipeddisekhar63@gmail.com]
+- 💬 **GitHub Issues**: [Report bugs and feature requests](https://github.com/malipeddisekhar)
 
 ### Reporting Issues
 Please include:
@@ -684,11 +673,7 @@ Please include:
 - [ ] API rate limiting
 - [ ] Advanced search functionality
 
----
 
-**Made with ❤️ by [Your Name]**
-
----
 
 *Last Updated: May 11, 2026*  
 *Version: 1.0.0*
