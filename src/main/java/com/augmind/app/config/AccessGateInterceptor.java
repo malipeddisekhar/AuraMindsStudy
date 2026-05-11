@@ -31,12 +31,15 @@ public class AccessGateInterceptor implements HandlerInterceptor {
         }
 
         String uri = request.getRequestURI();
-        if (uri.startsWith("/tasks") || uri.startsWith("/subjects") || uri.startsWith("/schedule") || uri.startsWith("/notes") || uri.startsWith("/stats")) {
+        // API endpoints return 401 JSON so the frontend can handle it
+        if (uri.startsWith("/tasks") || uri.startsWith("/subjects") || uri.startsWith("/schedule")
+                || uri.startsWith("/notes") || uri.startsWith("/stats") || uri.startsWith("/api/profile")) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access denied");
             return false;
         }
 
-        response.sendRedirect("/denied?reason=unauthorized");
+        // All other protected pages redirect to the access page
+        response.sendRedirect("/access");
         return false;
     }
 }

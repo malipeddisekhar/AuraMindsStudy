@@ -3691,6 +3691,8 @@ async function init() {
   typeHeroQuote(pickQuote());
   updateQuickAddPlaceholder(getActivePageId());
   document.getElementById('scheduleDateInput').value = formatDateISO(new Date());
+  // Touch daily activity on load to update streak, then load all data
+  try { await api.request('/stats/touch', { method: 'POST' }); } catch (_) {}
   await Promise.all([loadTasks(), loadTasksPage(), loadSubjects(), loadSchedule(), loadNotes(), refreshStats()]);
 }
 

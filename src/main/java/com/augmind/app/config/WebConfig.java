@@ -18,6 +18,19 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(@NonNull InterceptorRegistry registry) {
         registry.addInterceptor(accessGateInterceptor)
             .addPathPatterns("/**")
-            .excludePathPatterns("/denied", "/denied.html", "/access", "/access.html", "/", "/api/access/**");
+            .excludePathPatterns(
+                // Public pages
+                "/", "/access", "/access.html", "/denied", "/denied.html",
+                // Health check (used by Render and load balancers)
+                "/health",
+                // Access API (no auth needed)
+                "/api/access/**",
+                // Static resources
+                "/static/**", "/css/**", "/js/**", "/images/**", "/fonts/**",
+                "/**/*.css", "/**/*.js", "/**/*.ico", "/**/*.png", "/**/*.jpg",
+                "/**/*.svg", "/**/*.woff", "/**/*.woff2", "/**/*.ttf",
+                // Spring error page
+                "/error"
+            );
     }
 }

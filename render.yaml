@@ -5,4 +5,11 @@ services:
     plan: free
     autoDeploy: true
     dockerfilePath: ./Dockerfile
-    healthCheckPath: /access
+    # Render injects PORT automatically; the app reads ${PORT:8080}
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: ACCESS_CODE_HASH
+        sync: false   # set this secret in the Render dashboard
+    # /health returns {"status":"UP"} — fast, no session, no redirect
+    healthCheckPath: /health

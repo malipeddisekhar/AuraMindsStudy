@@ -3,6 +3,7 @@ package com.augmind.app.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
@@ -22,6 +23,13 @@ public class UserMetrics {
 
     @Column(name = "last_active", nullable = false)
     private LocalDate lastActive;
+
+    @PrePersist
+    void onCreate() {
+        if (lastActive == null) {
+            lastActive = LocalDate.now();
+        }
+    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

@@ -20,6 +20,11 @@ public class StatsController {
 
     @GetMapping
     public StatsResponse getStats() {
+        return statsService.getStats();
+    }
+
+    @PostMapping("/touch")
+    public StatsResponse touchActivity() {
         return statsService.touchDailyActivity();
     }
 

@@ -5158,6 +5158,8 @@ async function init() {
   document.getElementById('scheduleDateInput').value = formatDateISO(new Date());
   applyProfileUI();
   typeHeroQuote(pickQuote());
+  // Touch daily activity on load to update streak, then load all data
+  try { await api.request('/stats/touch', { method: 'POST' }); } catch (_) {}
   await Promise.all([loadTasks(), loadTasksPage(), loadSubjects(), loadSchedule(), loadNotes(), refreshStats()]);
 }
 
